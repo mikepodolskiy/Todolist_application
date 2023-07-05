@@ -8,5 +8,4 @@ educational project
 3. Postgres
 
 <h4>Requirements listed in requirements.txt</h4>
-<h4>Poetry was used, look through pyproject.toml and poetry.lock</h4>
 <h4>Environmental library is django-environ</h4>
