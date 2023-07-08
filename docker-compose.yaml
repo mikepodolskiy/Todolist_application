@@ -8,29 +8,29 @@ services:
   #        api:
   #          condition: service_started
 
-#    run_migrations:
-#      build:
-#        context: .
-#      env_file: .env
-#      environment:
-#        POSTGRES_HOST: postgres_db
-#      depends_on:
-#        postgres_db:
-#          condition: service_healthy
-#      command: python manage.py migrate
+    run_migrations:
+      build:
+        context: .
+      env_file: .env
+      environment:
+        POSTGRES_HOST: postgres_db
+      depends_on:
+        postgres_db:
+          condition: service_healthy
+      command: python manage.py migrate
 #
-#    api:
-#      build: .
-#      env_file: .env
-#      environment:
-#        POSTGRES_HOST: postgres_db
-#      depends_on:
-#        postgres_db:
-#          condition: service_healthy
-#        run_migrations:
-#          condition: service_completed_successfully
-#      ports:
-#        - "8000:8000"
+    api:
+      build: .
+      env_file: .env
+      environment:
+        POSTGRES_HOST: postgres_db
+      depends_on:
+        postgres_db:
+          condition: service_healthy
+        run_migrations:
+          condition: service_completed_successfully
+      ports:
+        - "8000:8000"
 #      volumes:
 #        - ./core:/app/core/
 #        - ./todolist:/app/todolist
