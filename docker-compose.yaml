@@ -1,29 +1,28 @@
 version: "3.9"
 services:
-  #  front:
-  #    image: sermalenk/skypro-front:lesson-34
-  #    ports:
-  #      - 8000:8000
-  #    depends_on:
-  #        api:
-  #          condition: service_started
+    front:
+      image: sermalenk/skypro-front:lesson-34
+      ports:
+        - 80:80
+      depends_on:
+          api:
+            condition: service_started
 
     run_migrations:
-      build:
-        context: .
+      build: .
       env_file: .env
       environment:
-        POSTGRES_HOST: postgres_db
+        - POSTGRES_HOST=postgres_db
       depends_on:
         postgres_db:
           condition: service_healthy
-      command: python manage.py migrate
-#
+      command: python ./manage.py migrate
+
     api:
       build: .
       env_file: .env
       environment:
-        POSTGRES_HOST: postgres_db
+        - POSTGRES_HOST=postgres_db
       depends_on:
         postgres_db:
           condition: service_healthy
@@ -31,21 +30,20 @@ services:
           condition: service_completed_successfully
       ports:
         - "8000:8000"
-#      volumes:
-#        - ./core:/app/core/
-#        - ./todolist:/app/todolist
+      volumes:
+        - ./todolist:/app/
 
     postgres_db:
-      image: postgres:15.1-alpine
+      image: postgres:latest
       ports:
         - "5432:5432"
-      #    env_file: .env
+      env_file: .env
       environment:
-        POSTGRES_USER: postgres
-        POSTGRES_DB$: postgres
-        POSTGRES_PASSWORD: postgres
+        POSTGRES_USER: ${DB_USER}
+        POSTGRES_DB: ${DB_NAME}
+        POSTGRES_PASSWORD: ${DB_PASSWORD}
       healthcheck:
-        test: pg_isready -U postgres-d postgres
+        test: pg_isready -U ${DB_USER} -d ${DB_NAME}
         timeout: 3s
         retries: 10
         interval: 5s
