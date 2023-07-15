@@ -16,7 +16,7 @@ services:
       depends_on:
         postgres_db:
           condition: service_healthy
-      command: python ./manage.py migrate
+      command: python manage.py migrate
 
     api:
       build: .
@@ -30,8 +30,8 @@ services:
           condition: service_completed_successfully
       ports:
         - "8000:8000"
-      volumes:
-        - ./todolist:/app/
+#      volumes:
+#        - ./todolist/:/app/
 
     postgres_db:
       image: postgres:latest
