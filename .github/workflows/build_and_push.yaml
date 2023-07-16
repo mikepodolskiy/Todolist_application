@@ -38,4 +38,13 @@ jobs:
           source: "deploy/*"
           target: "todolist_diplom"
           strip_components: 1
+      - name: deploy app
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd todolist_diplom
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
 
