@@ -53,7 +53,7 @@ services:
     command: python manage.py migrate
 
   front:
-    image: sermalenk/skypro-front:lesson-34
+    image: sermalenk/skypro-front:lesson-35
     restart: on-failure
     ports:
       - "80:80"

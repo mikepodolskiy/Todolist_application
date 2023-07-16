@@ -47,4 +47,3 @@ jobs:
           script: |
             cd todolist_diplom
             echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
-
