@@ -39,13 +39,21 @@ jobs:
           target: "todolist_diplom"
           strip_components: 1
       - name: deploy app
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@vmaster
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd todolist_diplom
-            docker-compose down
             docker-compose pull
-            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
+            docker-compose down
+            docker-compose up -d
+      - name: clean up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            docker system prune -f -a
