@@ -46,6 +46,6 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd todolist_diplom
-            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose down
-            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose pull
+            docker-compose down
+            docker-compose pull
             echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
