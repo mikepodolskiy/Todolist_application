@@ -5,13 +5,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from core.models import User
-from core.serializers import UserCreateSerializer, UserLoginSerializer, UserProfileSerializer, UpdatePasswordSerializer
+from core.serializers import UserSerializer, UserLoginSerializer, UserProfileSerializer, UpdatePasswordSerializer
 
 
 # Create your views here.
 class UserCreateView(CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserCreateSerializer
+    serializer_class = UserSerializer
 
 
 class UserLoginView(generics.GenericAPIView):

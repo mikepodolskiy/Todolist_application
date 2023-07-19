@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from core.models import User
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(required=True, write_only=True,
                                      validators=[validate_password])
     password_repeat = serializers.CharField(required=True, write_only=True)
