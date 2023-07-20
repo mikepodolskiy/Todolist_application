@@ -29,7 +29,7 @@ DEBUG = env.bool('DEBUG')
 
 # Raises Django's ImproperlyConfigured
 # exception if SECRET_KEY not in os.environ
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env.str('SECRET_KEY')
 
 ALLOWED_HOSTS = ["*"]
 
@@ -44,8 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'social_django',
-    'core',
     'goals',
+    'core',
+
 ]
 
 MIDDLEWARE = [
@@ -88,7 +89,7 @@ DATABASES = {
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': env.str('DB_HOST', default='127.0.0.1'),
-        #'HOST': "localhost",
+        # 'HOST': "localhost",
         'PORT': '5432',
     }
 }
