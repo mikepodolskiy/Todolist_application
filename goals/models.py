@@ -61,7 +61,7 @@ class Goal(GoalsModelMixin):
         verbose_name_plural = "Цели"
 
 
-class Comment(models.Model):
+class Comment(GoalsModelMixin):
     user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
     text = models.CharField(verbose_name="Текст")
     goal = models.ForeignKey(Goal, verbose_name="Цель", on_delete=models.CASCADE)
