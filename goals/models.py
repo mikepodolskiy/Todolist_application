@@ -7,8 +7,8 @@ from core.models import User
 
 
 class GoalsModelMixin(models.Model):
-    created = models.DateTimeField(verbose_name="Дата создания")
-    updated = models.DateTimeField(verbose_name="Дата последнего обновления")
+    created = models.DateTimeField(verbose_name="Дата создания", blank=True, null=True)
+    updated = models.DateTimeField(verbose_name="Дата последнего обновления", blank=True, null = True)
 
     def save(self, *args, **kwargs):
         if not self.id:  # Когда объект только создается, у него еще нет id
