@@ -4,7 +4,7 @@ from core.serializers import UserSerializer
 from goals.models import GoalCategory
 
 
-class GoalCreateSerializer(serializers.ModelSerializer):
+class GoalCategoryCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     default = serializers.CurrentUserDefault()
 

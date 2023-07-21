@@ -44,8 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'social_django',
-    'goals',
+    'django_filters',
     'core',
+    'goals',
 
 ]
 
@@ -93,6 +94,9 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+
+
 
 # import dj_database_url
 #
