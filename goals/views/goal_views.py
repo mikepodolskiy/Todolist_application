@@ -15,7 +15,6 @@ class GoalCreateView(CreateAPIView):
 
 
 class GoalListView(ListAPIView):
-    model = Goal
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalSerializer
     pagination_class = LimitOffsetPagination
@@ -30,20 +29,16 @@ class GoalListView(ListAPIView):
     search_fields = ["title", "description"]
 
     def get_queryset(self):
-        return Goal.objects.select_related("user").filter(
-            user=self.request.user
-        ).exclude(status=Goal.Status.archived)
+        return Goal.objects.filter(category__board__participants__user=self.request.user,
+                                   category__is_deleted=False).exclude(status=Goal.Status.archived)
 
 
 class GoalView(RetrieveUpdateDestroyAPIView):
-    model = Goal
     serializer_class = GoalSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Goal.objects.select_related("user").filter(
-            user=self.request.user
-        ).exclude(status=Goal.Status.archived)
+        return Goal.objects.exclude(status=Goal.Status.archived)
 
     def perform_destroy(self, instance):
         instance.status = Goal.Status.archived

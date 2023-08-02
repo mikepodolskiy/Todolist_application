@@ -15,7 +15,6 @@ class CommentCreateView(CreateAPIView):
 
 
 class CommentListView(ListAPIView):
-    model = Comment
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = CommentSerializer
     pagination_class = LimitOffsetPagination
@@ -28,13 +27,12 @@ class CommentListView(ListAPIView):
     ordering = ["-created"]
 
     def get_queryset(self):
-        return Comment.objects.filter(
-            user=self.request.user
+        return Comment.objects.select_related("user").filter(
+            goal__category__board__participants__user=self.request.user
         )
 
 
 class CommentView(RetrieveUpdateDestroyAPIView):
-    model = Comment
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
 

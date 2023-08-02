@@ -3,6 +3,7 @@ from rest_framework import permissions, filters
 from rest_framework.pagination import LimitOffsetPagination
 
 from goals.models import GoalCategory
+from goals.permissions import GoalCategoryPermission
 from goals.serializers.category_serializers import GoalCategoryCreateSerializer, GoalCategorySerializer
 
 
@@ -13,7 +14,6 @@ class GoalCategoryCreateView(CreateAPIView):
 
 
 class GoalCategoryListView(ListAPIView):
-    model = GoalCategory
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCategorySerializer
     pagination_class = LimitOffsetPagination
@@ -26,15 +26,16 @@ class GoalCategoryListView(ListAPIView):
     search_fields = ["title"]
 
     def get_queryset(self):
-        return GoalCategory.objects.filter(
-            user=self.request.user, is_deleted=False
+        return GoalCategory.objects.select_related(
+            "user").filter(
+
+            board__participants__user=self.request.user, is_deleted=False,
         )
 
 
 class GoalCategoryView(RetrieveUpdateDestroyAPIView):
-    model = GoalCategory
     serializer_class = GoalCategorySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [GoalCategoryPermission]
 
     def get_queryset(self):
         return GoalCategory.objects.filter(user=self.request.user, is_deleted=False)
