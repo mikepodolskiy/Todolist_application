@@ -6,7 +6,7 @@ from django.utils import timezone
 from core.models import User
 
 
-class DateTimeModelMixin(models.Model):
+class GoalsModelMixin(models.Model):
     created = models.DateTimeField(verbose_name="Дата создания", blank=True, null=True)
     updated = models.DateTimeField(verbose_name="Дата последнего обновления", blank=True, null=True)
 
@@ -20,7 +20,7 @@ class DateTimeModelMixin(models.Model):
         abstract = True
 
 
-class Board(DateTimeModelMixin):
+class Board(GoalsModelMixin):
     title = models.CharField(max_length=255, verbose_name="Название")
     is_deleted = models.BooleanField(verbose_name="Удалена", default=False)
 
@@ -32,7 +32,7 @@ class Board(DateTimeModelMixin):
         return self.title
 
 
-class GoalCategory(DateTimeModelMixin):
+class GoalCategory(GoalsModelMixin):
     title = models.CharField(verbose_name="Название", max_length=255)
     user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
     is_deleted = models.BooleanField(verbose_name="Удалена", default=False)
@@ -51,7 +51,7 @@ class GoalCategory(DateTimeModelMixin):
         return self.title
 
 
-class Goal(DateTimeModelMixin):
+class Goal(GoalsModelMixin):
     class Status(models.IntegerChoices):
         to_do = 1, "К выполнению"
         in_progress = 2, "В процессе"
@@ -88,7 +88,7 @@ class Goal(DateTimeModelMixin):
         return self.title
 
 
-class Comment(DateTimeModelMixin):
+class Comment(GoalsModelMixin):
     user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
     text = models.CharField(verbose_name="Текст")
     goal = models.ForeignKey(Goal, verbose_name="Цель", on_delete=models.CASCADE)
@@ -98,7 +98,7 @@ class Comment(DateTimeModelMixin):
         verbose_name_plural = "Комментарии"
 
 
-class BoardParticipant(DateTimeModelMixin):
+class BoardParticipant(GoalsModelMixin):
     class Role(models.IntegerChoices):
         owner = 1, "Владелец"
         writer = 2, "Редактор"
