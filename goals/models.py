@@ -1,6 +1,4 @@
 from django.db import models
-
-from django.db import models
 from django.utils import timezone
 
 from core.models import User
@@ -117,3 +115,5 @@ class BoardParticipant(GoalsModelMixin):
         unique_together = ("board", "user")
         verbose_name = "Участник"
         verbose_name_plural = "Участники"
+
+

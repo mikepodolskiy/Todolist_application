@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'social_django',
     'django_filters',
+    'bot',
     'core',
     'goals',
 
@@ -89,14 +90,11 @@ DATABASES = {
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env.str('DB_HOST', default='127.0.0.1'),
-        # 'HOST': "localhost",
+        # 'HOST': env.str('DB_HOST', default='127.0.0.1'),
+        'HOST': "localhost",
         'PORT': '5432',
     }
 }
-
-
-
 
 # import dj_database_url
 #
@@ -161,3 +159,37 @@ SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination'
 }
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "console": {
+            "format": "%(asctime)s - %(levelname)s - %(message)s",
+            "date": "%y-%m-%d %H:%M:%S"
+        }
+
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "console",
+        },
+        "null": {
+            "class": "logging.NullHandler",
+            "formatter": "console",
+        },
+    },
+    "loggers": {
+        "": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console"],
+        },
+        "urllib3": {
+            "handler": ["null"]
+        },
+    },
+}
+
+BOT_TOKEN = env("BOT_TOKEN_DEV")
+# BOT_TOKEN = env("BOT_TOKEN_PROD")
