@@ -7,7 +7,7 @@ from todolist_diplom.settings import BOT_TOKEN
 
 class TgClient:
     def __init__(self, token=None):
-        self.__token = token if token else settings.BOT_TOKEN
+        self.__token = token if token else BOT_TOKEN
 
     def get_url(self, method: str):
         return f"https://api.telegram.org/bot{self.__token}/{method}"

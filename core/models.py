@@ -1,9 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from rest_framework import serializers
-
 
 class User(AbstractUser):
+
+    verification_code = models.CharField(max_length=20, null=True)
 
 
     class Meta:
