@@ -49,3 +49,10 @@ BOT_TOKEN_PROD=<br>
 
 Note that BOT_TOKEN_DEV or BOT_TOKEN_PROD was used optionally, choose right one in settings.py
 
+<h3>Test:</h3>
+For testing:<br> 
+first change settings file<br>
+comment # this string:<br> 
+'HOST': env.str('DB_HOST', default='127.0.0.1'),<br>
+make this string readable for python:<br>
+'HOST': "localhost",

@@ -1,8 +1,9 @@
 from collections import namedtuple
-from typing import Any, Type, Optional, List
+from typing import Type, List, Union, Any, Dict, Optional
 
 from django.core.management import BaseCommand
 from django.db import IntegrityError
+
 
 from bot.models import TgUser
 from bot.tg.client import TgClient
@@ -19,7 +20,7 @@ class Command(BaseCommand):
         self.tg_client = TgClient()
         self.users = {}
 
-    def handle(self, *args, **kwargs: Any) -> None:
+    def handle(self, *args, **kwargs) -> None:
         """
         launches bot and controls answering only to new message
         """
@@ -85,7 +86,7 @@ class Command(BaseCommand):
         if text:
             self.tg_client.send_message(chat_id=chat_id, text=text)
 
-    def send_goals(self, user_id: Type[int]) -> Optional[Message, str]:
+    def send_goals(self, user_id: Type[int]) -> Union[Message, str]:
         """
         processing data with goals and forms message to send
         """
@@ -97,12 +98,12 @@ class Command(BaseCommand):
         message = self._make_goals_message(data)
         return message
 
-    def send_cat(self, user_id: Optional[int, Type[int]], msg: Message) -> Optional[str, Message, dict]:
+    def send_cat(self, user_id: Union[int, Type[int]], msg: Message) -> str | tuple[str, dict[int, dict]]:
         """
         processing data with categories, forms message and users dict, set next handler
         """
         chat_id = msg.chat.id
-        users = {}
+        users: Dict = {}
         categories = self._get_cats(user_id)
         if not categories.exists():
             return "No categories was found. Please create one to create goal"
@@ -143,7 +144,7 @@ class Command(BaseCommand):
         user_id = kwargs.get('user_id')
         chat_id = kwargs.get('chat_id')
         message = kwargs.get('message')
-        users = kwargs.get('users')
+        users: Dict = kwargs.get('users')
         try:
             category_id = users.get(chat_id, {}).get('category_id')
             Goal.objects.create(title=message, user_id=user_id, category_id=category_id)
@@ -154,7 +155,7 @@ class Command(BaseCommand):
         except Exception as e:
             return f"Error: {str(e)}"
 
-    def _get_goals(self, user_id: Type[int]) -> List:
+    def _get_goals(self, user_id: Type[int]) -> List[Goal]:
         """
         collect data with user's goals from db
         """
@@ -166,7 +167,7 @@ class Command(BaseCommand):
         )
         return goals
 
-    def _get_cats(self, user_id: Type[int]) -> List:
+    def _get_cats(self, user_id: Union[int, Type[int]]) -> List[GoalCategory]:
         """
         collect data with user's categories from db
         """
@@ -180,7 +181,7 @@ class Command(BaseCommand):
         )
         return categories
 
-    def _get_goals_data(self, data: List) -> List:
+    def _get_goals_data(self, data: List[Goal]) -> list[dict[str, Any]]:
         """
         packs goals data to required form
 

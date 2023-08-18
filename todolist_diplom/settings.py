@@ -90,8 +90,8 @@ DATABASES = {
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env.str('DB_HOST', default='127.0.0.1'),
-        # 'HOST': "localhost",
+        # 'HOST': env.str('DB_HOST', default='127.0.0.1'),
+        'HOST': "localhost",
         'PORT': '5432',
     }
 }

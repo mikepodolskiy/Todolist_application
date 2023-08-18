@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Any
 
 import requests
 from bot.tg.dc import GetUpdatesResponse, SendMessageResponse
