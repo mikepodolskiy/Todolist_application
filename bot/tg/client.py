@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 import requests
 from bot.tg.dc import GetUpdatesResponse, SendMessageResponse
@@ -12,7 +12,7 @@ class TgClient:
     def get_url(self, method: str) -> str:
         return f"https://api.telegram.org/bot{self.__token}/{method}"
 
-    def _get_response(self, method: str, payload: dict) -> Optional[GetUpdatesResponse, SendMessageResponse]:
+    def _get_response(self, method: str, payload: dict) -> Any:
         response = requests.get(self.get_url(method), params=payload)
         return response.json()
 
