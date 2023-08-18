@@ -10,14 +10,14 @@ class TgUser(models.Model):
     verification_code = models.CharField(max_length=20, unique=True, null=True, blank=True)
 
     @property
-    def is_verified(self):
+    def is_verified(self) -> bool:
         return bool(self.user)
 
     @staticmethod
-    def _generate_verification_code():
+    def _generate_verification_code() -> str:
         return get_random_string(20)
 
-    def update_verification_code(self):
+    def update_verification_code(self) -> None:
         self.verification_code = self._generate_verification_code()
         self.save(update_fields=["verification_code"])
 

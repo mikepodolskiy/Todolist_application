@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from core.serializers import UserSerializer
-from goals.models import Goal, BoardParticipant
+from goals.models import Goal, BoardParticipant, GoalCategory
 
 
 class GoalCreateSerializer(serializers.ModelSerializer):
@@ -13,7 +13,11 @@ class GoalCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id', 'created', 'updated')
 
-    def validate_category(self, category):
+    def validate_category(self, category: GoalCategory) -> GoalCategory:
+        """
+        validates category and user's role
+
+        """
 
         if category.is_deleted:
             raise ValidationError("The category was deleted")

@@ -1,4 +1,5 @@
 from collections import namedtuple
+from typing import Any, Type, Optional, List
 
 from django.core.management import BaseCommand
 from django.db import IntegrityError
@@ -18,7 +19,10 @@ class Command(BaseCommand):
         self.tg_client = TgClient()
         self.users = {}
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **kwargs: Any) -> None:
+        """
+        launches bot and controls answering only to new message
+        """
         offset = 0
         while True:
             res = self.tg_client.get_updates(offset=offset)
@@ -29,6 +33,10 @@ class Command(BaseCommand):
                 self.handle_message(item.message)
 
     def handle_message(self, msg: Message):
+        """
+        verify tg user - checks verification code, gives verification code if there was no verification before
+        continues if user was verified
+        """
         tg_user, _ = TgUser.objects.get_or_create(tg_chat_id=msg.chat.id, defaults={"username": msg.chat.username})
         if not tg_user.is_verified:
             tg_user.update_verification_code()
@@ -38,12 +46,15 @@ class Command(BaseCommand):
             # self.tg_client.send_message(msg.chat.id, f"You've already verified")
             self.handle_auth_user(tg_user, msg)
 
-    def handle_auth_user(self, tg_user, msg):
+    def handle_auth_user(self, tg_user: TgUser, msg: Message) -> None:
+        """
+        receiving text from telegram user, choosing scenario to launch, depends on message text
+        """
         text = None
         chat_id = msg.chat.id
         if msg.text.startswith("/"):
             if msg.text == "/goals":
-                text = self.send_goals(user_id=tg_user.user_id, msg=msg)
+                text = self.send_goals(user_id=tg_user.user_id)
 
             elif msg.text == "/create":
                 text, self.users = self.send_cat(user_id=tg_user.user.id, msg=msg)
@@ -55,7 +66,6 @@ class Command(BaseCommand):
                     text = 'Creation cancelled'
                 except:
                     text = 'Creation cancelled'
-
 
             else:
                 self.tg_client.send_message(chat_id, "Unknown command \nType /goals or /create or /cancel")
@@ -75,7 +85,10 @@ class Command(BaseCommand):
         if text:
             self.tg_client.send_message(chat_id=chat_id, text=text)
 
-    def send_goals(self, user_id, msg):
+    def send_goals(self, user_id: Type[int]) -> Optional[Message, str]:
+        """
+        processing data with goals and forms message to send
+        """
         goals = self._get_goals(user_id)
         if not goals.exists():
             return "Goals not found"
@@ -84,7 +97,10 @@ class Command(BaseCommand):
         message = self._make_goals_message(data)
         return message
 
-    def send_cat(self, user_id, msg):
+    def send_cat(self, user_id: Optional[int, Type[int]], msg: Message) -> Optional[str, Message, dict]:
+        """
+        processing data with categories, forms message and users dict, set next handler
+        """
         chat_id = msg.chat.id
         users = {}
         categories = self._get_cats(user_id)
@@ -99,7 +115,11 @@ class Command(BaseCommand):
 
         return message, users
 
-    def choose_cat(self, **kwargs):
+    def choose_cat(self, **kwargs) -> str:
+        """
+        processing users dict data, determining next handler, save category from message to users dict
+
+        """
         chat_id = kwargs.get("chat_id")
         message = kwargs.get("message")
         users = kwargs.get("users")
@@ -116,7 +136,10 @@ class Command(BaseCommand):
         else:
             return "Category index not valid"
 
-    def create_goal(self, **kwargs):
+    def create_goal(self, **kwargs) -> str:
+        """
+        collect data from message and users, create and save new goal with all data that was collected
+        """
         user_id = kwargs.get('user_id')
         chat_id = kwargs.get('chat_id')
         message = kwargs.get('message')
@@ -131,7 +154,10 @@ class Command(BaseCommand):
         except Exception as e:
             return f"Error: {str(e)}"
 
-    def _get_goals(self, user_id):
+    def _get_goals(self, user_id: Type[int]) -> List:
+        """
+        collect data with user's goals from db
+        """
         goals = (
             Goal.objects.select_related('user')
             .filter(category__board__participants__user_id=user_id, category__is_deleted=False)
@@ -140,7 +166,10 @@ class Command(BaseCommand):
         )
         return goals
 
-    def _get_cats(self, user_id):
+    def _get_cats(self, user_id: Type[int]) -> List:
+        """
+        collect data with user's categories from db
+        """
         categories = (
             GoalCategory.objects.select_related('user')
             .filter(
@@ -151,7 +180,11 @@ class Command(BaseCommand):
         )
         return categories
 
-    def _get_goals_data(self, data):
+    def _get_goals_data(self, data: List) -> List:
+        """
+        packs goals data to required form
+
+        """
         serializer = GoalSerializer(data, many=True)
         goals_data = [{
             "title": goal_data["title"],
@@ -165,15 +198,20 @@ class Command(BaseCommand):
         return goals_data
 
     def _get_cats_data(self, data):
+        """
+        packs categories data to required form
+        """
         serializer = GoalCategorySerializer(data, many=True)
         cats_data = [CatData(cat_id=cat_data["id"], title=cat_data["title"]) for cat_data in serializer.data]
 
         return cats_data
 
-    def _make_goals_message(self, data):
-
-        raw_message = [f"{item['title']}|" \
-                       f"description: {item['description']} |" \
+    def _make_goals_message(self, data: List) -> str:
+        """
+        transform goals data to string to send
+        """
+        raw_message = [f"{item['title']}|"
+                       f"description: {item['description']} |"
                        f"category: {item['category']} |"
                        f"due_date: {item['due_date']} |"
                        f"status: {item['status']} |\n"
@@ -181,7 +219,10 @@ class Command(BaseCommand):
         message = '\n'.join(raw_message)
         return message
 
-    def _make_cats_message(self, data):
+    def _make_cats_message(self, data) -> str:
+        """
+        transform categories data to string to send
+        """
 
         raw_message = [f'{index}) {item.title}' for index, item in enumerate(data, start=1)]
         message = '\n'.join(raw_message)

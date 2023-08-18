@@ -1,3 +1,5 @@
+from typing import List
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import permissions, filters
@@ -28,7 +30,10 @@ class GoalListView(ListAPIView):
     ordering = ["category", "priority", "due_date"]
     search_fields = ["title", "description"]
 
-    def get_queryset(self):
+    def get_queryset(self) -> List[Goal]:
+        """
+        make queryset to provide goals list visibility only to user, hides archived and deleted goals
+        """
         return Goal.objects.filter(category__board__participants__user=self.request.user,
                                    category__is_deleted=False).exclude(status=Goal.Status.archived)
 
@@ -37,10 +42,16 @@ class GoalView(RetrieveUpdateDestroyAPIView):
     serializer_class = GoalSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
+    def get_queryset(self) -> List[Goal]:
+        """
+        make queryset to hides archived goals
+        """
         return Goal.objects.exclude(status=Goal.Status.archived)
 
-    def perform_destroy(self, instance):
+    def perform_destroy(self, instance: Goal) -> Goal:
+        """
+        change field status to archived
+        """
         instance.status = Goal.Status.archived
         instance.save()
         return instance

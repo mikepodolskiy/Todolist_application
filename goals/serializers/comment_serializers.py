@@ -9,6 +9,9 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     def validate_goal(self, goal):
+        """
+        validate user's permission to comment the goal (by role)
+        """
         if goal.status == Goal.Status.archived:
             raise ValidationError("The goal was deleted")
         if not BoardParticipant.objects.filter(board_id=goal.category.board_id,
@@ -17,7 +20,6 @@ class CommentCreateSerializer(serializers.ModelSerializer):
                                                ).exists():
             raise PermissionDenied
         return goal
-
 
     class Meta:
         model = Comment

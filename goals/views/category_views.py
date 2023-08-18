@@ -1,3 +1,5 @@
+from typing import List
+
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import permissions, filters
 from rest_framework.pagination import LimitOffsetPagination
@@ -26,7 +28,10 @@ class GoalCategoryListView(ListAPIView):
     ordering = ["title"]
     search_fields = ["title"]
 
-    def get_queryset(self):
+    def get_queryset(self) -> List[GoalCategory]:
+        """
+        make queryset to provide categories list visibility only to user
+        """
         return GoalCategory.objects.select_related(
             "user").filter(
 
@@ -38,10 +43,14 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
     serializer_class = GoalCategorySerializer
     permission_classes = [GoalCategoryPermission]
 
-    def get_queryset(self):
+    def get_queryset(self) -> List[GoalCategory]:
+        """
+        make queryset to provide category visibility only to user
+        """
+
         return GoalCategory.objects.filter(user=self.request.user, is_deleted=False)
 
-    def perform_destroy(self, instance):
+    def perform_destroy(self, instance: GoalCategory) -> GoalCategory:
         instance.is_deleted = True
         instance.save()
         return instance

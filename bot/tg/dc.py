@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from pydantic import BaseModel
 from typing import List
 
@@ -26,14 +25,9 @@ class UpdateObj(BaseModel):
 
 class GetUpdatesResponse(BaseModel):
     ok: bool
-    result: List[UpdateObj]
-    # class Meta:
-    #     unknown = EXCLUDE
+    result: List[UpdateObj] = []
 
 
 class SendMessageResponse:
     ok: bool
     result: Message
-
-    # class Meta:
-    #     unknown = EXCLUDE

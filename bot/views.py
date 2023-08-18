@@ -1,20 +1,11 @@
-from rest_framework import response, status
+from rest_framework import response, serializers
 from rest_framework.generics import UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
-
-from bot.models import TgUser
 from core.models import User
-from bot.management.commands.runbot import Command
 from bot.serializers.bot_serializer import BotVerificationSerializer
-
-
-from rest_framework.views import APIView, Response
-from rest_framework import permissions, status
-
-from .models import TgUser
-
-from .tg.client import TgClient
-from todolist_diplom.settings import BOT_TOKEN
+from rest_framework import status
+from bot.models import TgUser
+from bot.tg.client import TgClient
 
 
 class BotVerificationView(UpdateAPIView):
@@ -22,13 +13,10 @@ class BotVerificationView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     success_answer = "Successful verification"
 
-    def get_object(self):
+    def get_object(self) -> User:
         return self.request.user
 
-
-
-
-    def perform_update(self, request):
+    def perform_update(self, request: serializers.ModelSerializer) -> response.Response:
         verification_code = self.request.data["verification_code"]
         tg_user = TgUser.objects.get(verification_code=verification_code)
         tg_user.user_id = self.get_object()
@@ -41,5 +29,3 @@ class BotVerificationView(UpdateAPIView):
         return response.Response(self.success_answer,
                                  status=status.HTTP_200_OK
                                  )
-
-

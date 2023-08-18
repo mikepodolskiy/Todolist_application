@@ -8,7 +8,10 @@ class GoalsModelMixin(models.Model):
     created = models.DateTimeField(verbose_name="Дата создания", blank=True, null=True)
     updated = models.DateTimeField(verbose_name="Дата последнего обновления", blank=True, null=True)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
+        """
+        method to fill created (if no id yet) and updated fields
+        """
         if not self.id:
             self.created = timezone.now()
         self.updated = timezone.now()
@@ -115,5 +118,3 @@ class BoardParticipant(GoalsModelMixin):
         unique_together = ("board", "user")
         verbose_name = "Участник"
         verbose_name_plural = "Участники"
-
-

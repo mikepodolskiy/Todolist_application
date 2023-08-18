@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from core.serializers import UserSerializer
-from goals.models import GoalCategory, BoardParticipant
+from goals.models import GoalCategory, BoardParticipant, Board
 
 
 class BaseGoalCategorySerializer(serializers.ModelSerializer):
@@ -11,7 +11,10 @@ class BaseGoalCategorySerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated")
         fields = "__all__"
 
-    def validate_board(self, board):
+    def validate_board(self, board: Board) -> Board:
+        """
+        validates board and user's role
+        """
         if board.is_deleted:
             raise ValidationError("The board was deleted")
         if not BoardParticipant.objects.filter(board_id=board.id, user=self.context['request'].user,

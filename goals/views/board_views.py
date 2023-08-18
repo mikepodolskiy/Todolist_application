@@ -1,10 +1,10 @@
+from typing import List
+
 from django.db import transaction
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import permissions, filters
 from rest_framework.pagination import LimitOffsetPagination
 
-from goals.filters import GoalDateFilter
 from goals.models import Board, Goal
 from goals.permissions import BoardPermission
 from goals.serializers.board_serializers import BoardCreateSerializer, BoardSerializer, BoardListSerializer
@@ -27,7 +27,11 @@ class BoardListView(ListAPIView):
     ordering = ["title"]
     ordering_fields = ["title"]
 
-    def get_queryset(self):
+    def get_queryset(self) -> List[Board]:
+        """
+        make queryset to provide board list visibility only to user
+        """
+
         return Board.objects.filter(
             participants__user=self.request.user,
             is_deleted=False
@@ -38,10 +42,17 @@ class BoardView(RetrieveUpdateDestroyAPIView):
     permission_classes = [BoardPermission]
     serializer_class = BoardSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> List[Board]:
+        """
+        make queryset to provide board visibility only to user
+        """
         return Board.objects.filter(participants__user=self.request.user, is_deleted=False)
 
-    def perform_destroy(self, instance: Board):
+    def perform_destroy(self, instance: Board) -> Board:
+        """
+        Change field is_deleted status to True (the same as delete, but board will stay in db)
+        archiving (status=archived) goals of this board
+        """
         with transaction.atomic():
             instance.is_deleted = True
             instance.save()
