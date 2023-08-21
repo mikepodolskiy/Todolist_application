@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from core.serializers import UserSerializer
 from goals.models import GoalCategory, BoardParticipant, Board
@@ -30,8 +31,8 @@ class GoalCategoryCreateSerializer(BaseGoalCategorySerializer):
 
 
 class GoalCategorySerializer(BaseGoalCategorySerializer):
-    user = UserSerializer(read_only=True)
-    board = serializers.PrimaryKeyRelatedField(read_only=True)
+    user: UserSerializer = UserSerializer(read_only=True)
+    board: PrimaryKeyRelatedField = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = GoalCategory

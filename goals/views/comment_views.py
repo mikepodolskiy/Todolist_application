@@ -1,5 +1,6 @@
 from typing import List
 
+from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import permissions, filters
@@ -28,7 +29,7 @@ class CommentListView(ListAPIView):
     filterset_class = CommentFilter
     ordering = ["-created"]
 
-    def get_queryset(self) -> List[Comment]:
+    def get_queryset(self) -> QuerySet:
         """
         make queryset to provide comments list visibility only to user
         """
@@ -41,7 +42,7 @@ class CommentView(RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self) -> List[Comment]:
+    def get_queryset(self) -> QuerySet:
         """
         make queryset to provide comment visibility only to user
         """

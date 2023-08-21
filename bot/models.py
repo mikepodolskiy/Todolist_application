@@ -1,13 +1,14 @@
 from django.db import models
+from django.db.models import BigIntegerField, CharField, OneToOneField
 from django.utils.crypto import get_random_string
 from core.models import User
 
 
 class TgUser(models.Model):
-    tg_chat_id = models.BigIntegerField(primary_key=True, editable=False, unique=True)
-    username = models.CharField(max_length=255, null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
-    verification_code = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    tg_chat_id: BigIntegerField = models.BigIntegerField(primary_key=True, editable=False, unique=True)
+    username: CharField = models.CharField(max_length=255, null=True, blank=True)
+    user: OneToOneField = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
+    verification_code: CharField | None = models.CharField(max_length=20, unique=True, null=True, blank=True)
 
     @property
     def is_verified(self) -> bool:
@@ -18,7 +19,7 @@ class TgUser(models.Model):
         return get_random_string(20)
 
     def update_verification_code(self) -> None:
-        self.verification_code = self._generate_verification_code()
+        self.verification_code: CharField = self._generate_verification_code()
         self.save(update_fields=["verification_code"])
 
     def __str__(self):

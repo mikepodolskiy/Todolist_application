@@ -1,12 +1,14 @@
 from django.db import models
+from django.db.models import DateTimeField, BooleanField, CharField, ForeignKey, TextField, PositiveSmallIntegerField, \
+    DateField
 from django.utils import timezone
 
 from core.models import User
 
 
 class GoalsModelMixin(models.Model):
-    created = models.DateTimeField(verbose_name="Дата создания", blank=True, null=True)
-    updated = models.DateTimeField(verbose_name="Дата последнего обновления", blank=True, null=True)
+    created: DateTimeField = models.DateTimeField(verbose_name="Дата создания", blank=True, null=True)
+    updated: DateTimeField = models.DateTimeField(verbose_name="Дата последнего обновления", blank=True, null=True)
 
     def save(self, *args, **kwargs) -> None:
         """
@@ -22,8 +24,8 @@ class GoalsModelMixin(models.Model):
 
 
 class Board(GoalsModelMixin):
-    title = models.CharField(max_length=255, verbose_name="Название")
-    is_deleted = models.BooleanField(verbose_name="Удалена", default=False)
+    title: CharField = models.CharField(max_length=255, verbose_name="Название")
+    is_deleted: BooleanField = models.BooleanField(verbose_name="Удалена", default=False)
 
     class Meta:
         verbose_name = "Доска"
@@ -34,10 +36,10 @@ class Board(GoalsModelMixin):
 
 
 class GoalCategory(GoalsModelMixin):
-    title = models.CharField(verbose_name="Название", max_length=255)
-    user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
-    is_deleted = models.BooleanField(verbose_name="Удалена", default=False)
-    board = models.ForeignKey(
+    title: CharField = models.CharField(verbose_name="Название", max_length=255)
+    user: ForeignKey = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
+    is_deleted: BooleanField = models.BooleanField(verbose_name="Удалена", default=False)
+    board: ForeignKey = models.ForeignKey(
         "Board",
         verbose_name="Доска",
         on_delete=models.PROTECT,
@@ -65,21 +67,21 @@ class Goal(GoalsModelMixin):
         high = 3, "Высокий"
         critical = 4, "Критический"
 
-    title = models.CharField(verbose_name="Название", max_length=150)
-    description = models.TextField(verbose_name="Описание", blank=True, null=True)
-    user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
-    category = models.ForeignKey(GoalCategory, on_delete=models.CASCADE)
-    status = models.PositiveSmallIntegerField(
+    title: CharField = models.CharField(verbose_name="Название", max_length=150)
+    description: TextField = models.TextField(verbose_name="Описание", blank=True, null=True)
+    user: ForeignKey = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
+    category: ForeignKey = models.ForeignKey(GoalCategory, on_delete=models.CASCADE)
+    status: PositiveSmallIntegerField = models.PositiveSmallIntegerField(
         verbose_name="Статус",
         choices=Status.choices,
         default=Status.to_do
     )
-    priority = models.PositiveSmallIntegerField(
+    priority: PositiveSmallIntegerField = models.PositiveSmallIntegerField(
         verbose_name="Приоритет",
         choices=Priority.choices,
         default=Priority.medium
     )
-    due_date = models.DateField(verbose_name='Дедлайн', null=True, blank=True)
+    due_date: DateField = models.DateField(verbose_name='Дедлайн', null=True, blank=True)
 
     class Meta:
         verbose_name = "Цель"
@@ -90,9 +92,9 @@ class Goal(GoalsModelMixin):
 
 
 class Comment(GoalsModelMixin):
-    user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
-    text = models.CharField(verbose_name="Текст")
-    goal = models.ForeignKey(Goal, verbose_name="Цель", on_delete=models.CASCADE)
+    user: ForeignKey = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
+    text: CharField = models.CharField(verbose_name="Текст")
+    goal: ForeignKey = models.ForeignKey(Goal, verbose_name="Цель", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Комментарий"
@@ -105,9 +107,11 @@ class BoardParticipant(GoalsModelMixin):
         writer = 2, "Редактор"
         reader = 3, "Читатель"
 
-    role = models.PositiveSmallIntegerField(verbose_name="Роль", choices=Role.choices, default=Role.reader)
-    user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT, related_name="participants")
-    board = models.ForeignKey(
+    role: PositiveSmallIntegerField = models.PositiveSmallIntegerField(verbose_name="Роль", choices=Role.choices,
+                                                                       default=Role.reader)
+    user: ForeignKey = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT,
+                                         related_name="participants")
+    board: ForeignKey = models.ForeignKey(
         Board,
         verbose_name="Доска",
         on_delete=models.PROTECT,

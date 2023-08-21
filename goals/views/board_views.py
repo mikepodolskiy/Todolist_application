@@ -1,6 +1,7 @@
 from typing import List
 
 from django.db import transaction
+from django.db.models import QuerySet
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import permissions, filters
 from rest_framework.pagination import LimitOffsetPagination
@@ -27,7 +28,7 @@ class BoardListView(ListAPIView):
     ordering = ["title"]
     ordering_fields = ["title"]
 
-    def get_queryset(self) -> List[Board]:
+    def get_queryset(self) -> QuerySet:
         """
         make queryset to provide board list visibility only to user
         """
@@ -42,7 +43,7 @@ class BoardView(RetrieveUpdateDestroyAPIView):
     permission_classes = [BoardPermission]
     serializer_class = BoardSerializer
 
-    def get_queryset(self) -> List[Board]:
+    def get_queryset(self) -> QuerySet:
         """
         make queryset to provide board visibility only to user
         """

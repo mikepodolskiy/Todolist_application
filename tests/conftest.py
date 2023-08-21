@@ -1,6 +1,8 @@
-import pytest
+from typing import Tuple, Any, Optional
 
-from goals.models import BoardParticipant
+import pytest
+from django.test.client import Client
+from goals.models import BoardParticipant, Board
 from tests.factories import UserFactory, BoardParticipantFactory, BoardFactory, GoalCategoryFactory, GoalFactory
 from pytest_factoryboy import register
 
@@ -13,13 +15,13 @@ register(BoardParticipantFactory)
 
 
 @pytest.fixture
-def password():
+def password() -> str:
     return '2defb408d063ff869816'
 
 #
 @pytest.fixture
 @pytest.mark.django_db
-def user_pwd_combo(password):
+def user_pwd_combo(password: str) -> tuple[Optional[UserFactory], str]:
     user = UserFactory()
     user.set_password(password)
     user.save()
@@ -28,7 +30,7 @@ def user_pwd_combo(password):
 
 @pytest.fixture
 @pytest.mark.django_db
-def client_and_user(client, user_pwd_combo):
+def client_and_user(client, user_pwd_combo: str) -> tuple[Client, Optional[UserFactory]]:
     user, _ = user_pwd_combo
     client.force_login(user)
 
@@ -37,7 +39,7 @@ def client_and_user(client, user_pwd_combo):
 
 @pytest.fixture
 @pytest.mark.django_db
-def user_and_board(user_pwd_combo, board):
+def user_and_board(user_pwd_combo: str, board: Board) -> Board:
     user, _ = user_pwd_combo
     BoardParticipantFactory.create(user=user, board=board, role=BoardParticipant.Role.owner)
 

@@ -1,9 +1,8 @@
 from collections import namedtuple
 from typing import Type, List, Union, Any, Dict, Optional
-
 from django.core.management import BaseCommand
 from django.db import IntegrityError
-
+from django.db.models import QuerySet
 
 from bot.models import TgUser
 from bot.tg.client import TgClient
@@ -33,7 +32,7 @@ class Command(BaseCommand):
                 offset = item.update_id + 1
                 self.handle_message(item.message)
 
-    def handle_message(self, msg: Message):
+    def handle_message(self, msg: Message) -> None:
         """
         verify tg user - checks verification code, gives verification code if there was no verification before
         continues if user was verified
@@ -55,7 +54,7 @@ class Command(BaseCommand):
         chat_id = msg.chat.id
         if msg.text.startswith("/"):
             if msg.text == "/goals":
-                text = self.send_goals(user_id=tg_user.user_id)
+                text = self.send_goals(user_id=tg_user.user.id)
 
             elif msg.text == "/create":
                 text, self.users = self.send_cat(user_id=tg_user.user.id, msg=msg)
@@ -122,18 +121,21 @@ class Command(BaseCommand):
 
         """
         chat_id = kwargs.get("chat_id")
-        message = kwargs.get("message")
-        users = kwargs.get("users")
+        message: str = kwargs.get("message")
+        users: dict = kwargs.get("users")
 
-        if message.isdigit():
-            val = int(message)
-            category_id = users.get(chat_id, {}).get(val)
-            if category_id:
-                users[chat_id]["next_handler"] = self.create_goal
-                users[chat_id]['category_id'] = category_id
-                return f"Category {val} was chosen. Set the goal name"
+        if type(message) == str:
+            if message.isdigit():
+                val = int(message)
+                category_id = users.get(chat_id, {}).get(val)
+                if category_id:
+                    users[chat_id]["next_handler"] = self.create_goal
+                    users[chat_id]['category_id'] = category_id
+                    return f"Category {val} was chosen. Set the goal name"
+                else:
+                    return f"Invalid category {category_id}"
             else:
-                return f"Invalid category {category_id}"
+                return "Category index not valid"
         else:
             return "Category index not valid"
 
@@ -155,7 +157,7 @@ class Command(BaseCommand):
         except Exception as e:
             return f"Error: {str(e)}"
 
-    def _get_goals(self, user_id: Type[int]) -> List[Goal]:
+    def _get_goals(self, user_id: Type[int]) -> QuerySet:
         """
         collect data with user's goals from db
         """
@@ -167,7 +169,7 @@ class Command(BaseCommand):
         )
         return goals
 
-    def _get_cats(self, user_id: Union[int, Type[int]]) -> List[GoalCategory]:
+    def _get_cats(self, user_id: Union[int, Type[int]]) -> QuerySet:
         """
         collect data with user's categories from db
         """
@@ -181,7 +183,7 @@ class Command(BaseCommand):
         )
         return categories
 
-    def _get_goals_data(self, data: List[Goal]) -> list[dict[str, Any]]:
+    def _get_goals_data(self, data: QuerySet) -> list[dict[str, Any]]:
         """
         packs goals data to required form
 

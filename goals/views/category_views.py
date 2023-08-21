@@ -1,5 +1,6 @@
 from typing import List
 
+from django.db.models import QuerySet
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import permissions, filters
 from rest_framework.pagination import LimitOffsetPagination
@@ -28,7 +29,7 @@ class GoalCategoryListView(ListAPIView):
     ordering = ["title"]
     search_fields = ["title"]
 
-    def get_queryset(self) -> List[GoalCategory]:
+    def get_queryset(self) -> QuerySet:
         """
         make queryset to provide categories list visibility only to user
         """
@@ -43,7 +44,7 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
     serializer_class = GoalCategorySerializer
     permission_classes = [GoalCategoryPermission]
 
-    def get_queryset(self) -> List[GoalCategory]:
+    def get_queryset(self) -> QuerySet:
         """
         make queryset to provide category visibility only to user
         """
