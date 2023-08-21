@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import Type, List, Union, Any, Dict, Optional
+from typing import Type, List, Union, Any, Dict
 from django.core.management import BaseCommand
 from django.db import IntegrityError
 from django.db.models import QuerySet
@@ -121,8 +121,9 @@ class Command(BaseCommand):
 
         """
         chat_id = kwargs.get("chat_id")
-        message: str = kwargs.get("message")
-        users: dict = kwargs.get("users")
+        message_raw = kwargs.get("message")
+        message: str = str(message_raw)
+        users = kwargs.get("users")
 
         if type(message) == str:
             if message.isdigit():
@@ -137,7 +138,7 @@ class Command(BaseCommand):
             else:
                 return "Category index not valid"
         else:
-            return "Category index not valid"
+            return "Invalid data"
 
     def create_goal(self, **kwargs) -> str:
         """
@@ -146,7 +147,8 @@ class Command(BaseCommand):
         user_id = kwargs.get('user_id')
         chat_id = kwargs.get('chat_id')
         message = kwargs.get('message')
-        users: Dict = kwargs.get('users')
+        users = kwargs.get("users")
+
         try:
             category_id = users.get(chat_id, {}).get('category_id')
             Goal.objects.create(title=message, user_id=user_id, category_id=category_id)

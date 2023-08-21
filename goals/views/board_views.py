@@ -49,7 +49,7 @@ class BoardView(RetrieveUpdateDestroyAPIView):
         """
         return Board.objects.filter(participants__user=self.request.user, is_deleted=False)
 
-    def perform_destroy(self, instance: Board) -> Board:
+    def perform_destroy(self, instance: Board) -> None:
         """
         Change field is_deleted status to True (the same as delete, but board will stay in db)
         archiving (status=archived) goals of this board
@@ -61,4 +61,3 @@ class BoardView(RetrieveUpdateDestroyAPIView):
             Goal.objects.filter(category__board=instance).update(
                 status=Goal.Status.archived
             )
-        return instance

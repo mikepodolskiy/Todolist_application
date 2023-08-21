@@ -49,10 +49,9 @@ class GoalView(RetrieveUpdateDestroyAPIView):
         """
         return Goal.objects.exclude(status=Goal.Status.archived)
 
-    def perform_destroy(self, instance: Goal) -> Goal:
+    def perform_destroy(self, instance: Goal) -> None:
         """
         change field status to archived
         """
         instance.status = Goal.Status.archived
         instance.save()
-        return instance

@@ -30,7 +30,7 @@ def user_pwd_combo(password: str) -> tuple[Optional[UserFactory], str]:
 
 @pytest.fixture
 @pytest.mark.django_db
-def client_and_user(client, user_pwd_combo: str) -> tuple[Client, Optional[UserFactory]]:
+def client_and_user(client, user_pwd_combo: str) -> tuple[Client, UserFactory | None]:
     user, _ = user_pwd_combo
     client.force_login(user)
 

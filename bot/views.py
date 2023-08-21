@@ -22,7 +22,7 @@ class BotVerificationView(UpdateAPIView):
     def get_object(self) -> User | AbstractBaseUser | AnonymousUser:
         return self.request.user
 
-    def perform_update(self, request: BaseSerializer[Any]) -> response.Response:
+    def perform_update(self, request: BaseSerializer[Any]) -> None:
         verification_code = self.request.data["verification_code"]
         tg_user = TgUser.objects.get(verification_code=verification_code)
         tg_user.user.id = self.get_object()
@@ -32,6 +32,3 @@ class BotVerificationView(UpdateAPIView):
         tg_client.send_message(chat_id=tg_user.tg_chat_id,
                                text=self.success_answer
                                )
-        return response.Response(self.success_answer,
-                                 status=status.HTTP_200_OK
-                                 )

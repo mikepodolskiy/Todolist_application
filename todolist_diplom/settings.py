@@ -193,5 +193,3 @@ LOGGING = {
 
 # BOT_TOKEN = env("BOT_TOKEN_DEV")
 BOT_TOKEN = env("BOT_TOKEN_PROD")
-
-
