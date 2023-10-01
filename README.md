@@ -5,7 +5,7 @@ educational project, simple Django application for task management
 <hr>
 <h2>Stack</h2>
 
-1. python 3.10
+1. Python 3.10
 2. Django 4.2.3
 3. PostgreSQL
 4. Django Rest Framework
