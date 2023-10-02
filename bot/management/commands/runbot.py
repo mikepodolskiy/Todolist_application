@@ -167,7 +167,7 @@ class Command(BaseCommand):
             Goal.objects.select_related('user')
             .filter(category__board__participants__user_id=user_id, category__is_deleted=False)
             .exclude(Q(status=Goal.Status.archived) & Q(status=Goal.Status.done))
-
+            .all()
         )
         return goals
 
