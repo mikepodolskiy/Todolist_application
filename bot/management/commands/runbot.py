@@ -2,7 +2,7 @@ from collections import namedtuple
 from typing import Type, List, Union, Any, Dict
 from django.core.management import BaseCommand
 from django.db import IntegrityError
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 
 from bot.models import TgUser
 from bot.tg.client import TgClient
@@ -166,8 +166,8 @@ class Command(BaseCommand):
         goals = (
             Goal.objects.select_related('user')
             .filter(category__board__participants__user_id=user_id, category__is_deleted=False)
-            .exclude(status=Goal.Status.archived)
-            .all()
+            .exclude(Q(status=Goal.Status.archived) & Q(status=Goal.Status.done))
+
         )
         return goals
 
