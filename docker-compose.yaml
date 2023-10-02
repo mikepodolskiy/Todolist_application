@@ -43,6 +43,7 @@ services:
       - ./goals:/app/goals/
       - ./todolist_diplom:/app/todolist_diplom/
 
+
   run_migrations:
     build: .
     env_file: .env
