@@ -1,7 +1,9 @@
 <h1>ToDoList</h1>
 <hr style="border: 1px solid white;">
 <h2>Web application - task manager</h2>
-educational project, simple Django application for task management
+educational project, simple Django backend for application for task management
+<br>
+frontend was provided to me
 <hr>
 <h2>Stack</h2>
 
